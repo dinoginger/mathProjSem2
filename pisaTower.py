@@ -57,8 +57,6 @@ def pisa(s):
 
     plot_points = [[],[]]
     while time < sunset:
-
-
         integrall = lambda u,t: 56.67*np.dot(V(s,t), N(u)) - (-0.6761758113*sin(-u) + 0.9478158778)*np.dot(V(s,t), N(u))
 
         def u_boundary(t):
@@ -80,8 +78,25 @@ def pisa(s):
         old_time += loop_step
         time += loop_step
     else:
-        pass
+        # EDGE CASE OF LAST INTERVAL (LAST TIME ITERATION..SUNSET)
+        integrall = lambda u, t: 56.67 * np.dot(V(s, t), N(u)) - (-0.6761758113 * sin(-u) + 0.9478158778) * np.dot(
+            V(s, t), N(u))
 
+        def u_boundary(t):
+            return [(5 * math.pi) / 2 + t, (3 * math.pi) / 2 + t]
+
+        def t_boundary():
+            return [old_time, sunset]
+
+        result, error, somehin = (nquad(integrall, [u_boundary, t_boundary], full_output=True))
+        print("lastcase",result)
+
+        total_errors += error
+        final_answer += result
+
+        # adding points for the plot. We want our flux to be per area and time to be converted to 24. hour thing.
+        plot_points[0].append(6 + (sunset* 12 / math.pi))  # Converting to normal hours.
+        plot_points[1].append(result / area)
 
     print(final_answer)
 
@@ -90,9 +105,15 @@ def pisa(s):
 
 def plot_flux(points, season_name, color):
     plt.plot(points[0], points[1],label="time step 0.1", color=color)
-    plt.xlabel("time of the day [hrs]")
+    plt.xlabel("Time of the day [hrs]")
     plt.ylabel("Energy per area [kWh/m^2]")
-    plt.xticks([round(value,2) for value in points[0][::2]])
+    hour_ticks = [points[0][0]]
+    print(int(points[0][-1]), season_name)
+    if season_name == "summer":
+        sunrise = min(points[0])
+        sunset = min(points[0])
+
+    plt.xticks([])
     plt.yticks([round(value, 3) for value in points[1]])
     return
 
@@ -113,4 +134,4 @@ if __name__ == "__main__":
     plot_flux(points, "spring", color="green")
     plt.legend(['Fall', 'Summer', 'Equator', 'Winter', 'Spring'])
     plt.title("Pisa Tower's energy yield per day throughout seasons")
-    plt.show()
+    #plt.show()
