@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
     points = pisa(latitude, spring)
     plot_flux(points, "spring", color="green")
-    plt.legend(['Fall (11.75°)', 'Summer', 'Equinox', 'Winter', 'Spring (-11.75°)'])
+    plt.legend(['Autumn (11.75°)', 'Summer', 'Equinox', 'Winter', 'Spring (-11.75°)'])
     plt.title("Pisa Tower's energy yield per day throughout seasons")
     # init grid
     plt.xticks(list(range(4,20)))

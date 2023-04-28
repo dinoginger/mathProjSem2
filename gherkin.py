@@ -105,8 +105,8 @@ if __name__ == "__main__":
 
     points = gherkin(latitude, spring)
     plot_flux(points, "spring", color="green")
-    plt.legend(['Fall (11.75°)', 'Summer', 'Equinox', 'Winter', 'Spring (-11.75°)'])
-    plt.title("Gherkin energy yield per day throughout seasons")
+    plt.legend(['Autumn (11.75°)', 'Summer', 'Equinox', 'Winter', 'Spring (-11.75°)'])
+    plt.title("The Gherkin energy yield per day throughout seasons")
     # init grid
     plt.xticks(list(range(4,20)))
     plt.grid()
