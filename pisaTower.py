@@ -10,7 +10,6 @@ winter = 23.5 * (math.pi/180)
 fall = 11.75 * (math.pi/180)
 spring = -11.75 * (math.pi/180)
 equinox = 0 * (math.pi/180)
-latitude = 43.7230136 * math.pi/180
 area = 3456.471540
 loop_step = 'define'
 AMOUNT_OF_NODES = 15
@@ -23,19 +22,19 @@ def N(u):
 
 # Vector field. Dependent on Latitude (L), and season of the year (s).
 # Summer s = -23.5, Winter = 23.5, equinox s = 0, Spring = -11.25, Fall s = 11.25
-def V(s,t):
+def sunVectorField(s, t, latitude):
     return np.array([-cos(t)*cos(s),
                      cos(latitude)*sin(s) + sin(latitude)*sin(t)*cos(s),
                      sin(latitude)*sin(s) - cos(latitude)*sin(t)*cos(s)])
 
 # Returns the value of the sunrise and the sunset at specific latitude and part of the year.
-def get_sunrise_and_sunset(s):
+def get_sunrise_and_sunset(s, latitude):
     sunrise = math.asin((sin(latitude)*sin(s)/(cos(latitude)*cos(s))))
     return sunrise, math.pi - sunrise
 
-def pisa(s):
-    sunrise, sunset = get_sunrise_and_sunset(s)
-    integrall = lambda u, t: 56.67*np.dot(V(s,t), N(u)) - (-0.6761758113*sin(-u) + 0.9478158778)*np.dot(V(s,t), N(u))
+def pisa(lat,s):
+    sunrise, sunset = get_sunrise_and_sunset(lat, s)
+    integrall = lambda u, t: 56.67 * np.dot(sunVectorField(s, t,latitude=lat), N(u)) - (-0.6761758113 * sin(-u) + 0.9478158778) * np.dot(sunVectorField(s, t), N(u))
 
     def u_boundary(t):
         return [(5*math.pi)/2 + t,(3*math.pi)/2 + t]
@@ -56,7 +55,7 @@ def pisa(s):
 
     plot_points = [[],[]]
     while time < sunset:
-        integrall = lambda u,t: 56.67*np.dot(V(s,t), N(u)) - (-0.6761758113*sin(-u) + 0.9478158778)*np.dot(V(s,t), N(u))
+        integrall = lambda u,t: 56.67 * np.dot(sunVectorField(s, t, latitude=lat), N(u)) - (-0.6761758113 * sin(-u) + 0.9478158778) * np.dot(sunVectorField(s, t), N(u))
 
         def u_boundary(t):
             return [(5 * math.pi) / 2 + t, (3 * math.pi) / 2 + t]
@@ -87,23 +86,28 @@ def plot_flux(points, season_name, color):
     # print(int(points[0][-1]), season_name)
 
 if __name__ == "__main__":
+    latitude = 43.7230136 * math.pi / 180
     # as our loop step we need to take something in the middle, so the integrated values wouldnt be relative
-    winter_sunrise, winter_sunset = get_sunrise_and_sunset(winter)
+    winter_sunrise, winter_sunset = get_sunrise_and_sunset(latitude,winter)
     loop_step = (winter_sunset - winter_sunrise) / AMOUNT_OF_NODES
+    print("loop_step", loop_step)
+    # list of full fluxes for bar chart
 
-    points = pisa(fall)
+    # --
+
+    points = pisa(latitude, fall)
     plot_flux(points, "Fall", color="orange")
 
-    points = pisa(summer)
+    points = pisa(latitude, summer)
     plot_flux(points, "summer", color="red")
 
-    points = pisa(equinox)
+    points = pisa(latitude, equinox)
     plot_flux(points, "equinox + equator", color="black")
 
-    points = pisa(winter)
+    points = pisa(latitude, winter)
     plot_flux(points, "winter", color="blue")
 
-    points = pisa(spring)
+    points = pisa(latitude, spring)
     plot_flux(points, "spring", color="green")
     plt.legend(['Fall', 'Summer', 'Equator', 'Winter', 'Spring'])
     plt.title("Pisa Tower's energy yield per day throughout seasons")
@@ -114,3 +118,5 @@ if __name__ == "__main__":
     plt.xlim(4,20)
 
     plt.show()
+
+    plt.bar(data=[])
