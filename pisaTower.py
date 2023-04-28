@@ -34,7 +34,7 @@ def get_sunrise_and_sunset(s, latitude):
 
 def pisa(lat,s):
     sunrise, sunset = get_sunrise_and_sunset(lat, s)
-    integrall = lambda u, t: 56.67 * np.dot(sunVectorField(s, t,latitude=lat), N(u)) - (-0.6761758113 * sin(-u) + 0.9478158778) * np.dot(sunVectorField(s, t), N(u))
+    integrall = lambda u, t: 56.67 * np.dot(sunVectorField(s, t,latitude=lat), N(u)) - (-0.6761758113 * sin(-u) + 0.9478158778) * np.dot(sunVectorField(s, t, latitude=lat), N(u))
 
     def u_boundary(t):
         return [(5*math.pi)/2 + t,(3*math.pi)/2 + t]
@@ -55,7 +55,7 @@ def pisa(lat,s):
 
     plot_points = [[],[]]
     while time < sunset:
-        integrall = lambda u,t: 56.67 * np.dot(sunVectorField(s, t, latitude=lat), N(u)) - (-0.6761758113 * sin(-u) + 0.9478158778) * np.dot(sunVectorField(s, t), N(u))
+        integrall = lambda u,t: 56.67 * np.dot(sunVectorField(s, t, latitude=lat), N(u)) - (-0.6761758113 * sin(-u) + 0.9478158778) * np.dot(sunVectorField(s, t, latitude=lat), N(u))
 
         def u_boundary(t):
             return [(5 * math.pi) / 2 + t, (3 * math.pi) / 2 + t]
@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
     points = pisa(latitude, spring)
     plot_flux(points, "spring", color="green")
-    plt.legend(['Fall', 'Summer', 'Equator', 'Winter', 'Spring'])
+    plt.legend(['Fall (11.75°)', 'Summer', 'Equinox', 'Winter', 'Spring (-11.75°)'])
     plt.title("Pisa Tower's energy yield per day throughout seasons")
     # init grid
     plt.xticks(list(range(4,20)))
